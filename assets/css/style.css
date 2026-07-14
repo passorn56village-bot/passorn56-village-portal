@@ -1,0 +1,287 @@
+/* =========================================================
+   REGISTRATION PAGE — PASSORN 56
+   ========================================================= */
+
+#registrationView {
+  width: 100%;
+}
+
+.registration-card {
+  width: min(920px, 100%);
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 42px);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: var(--shadow);
+}
+
+.registration-card .section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.registration-card .section-heading h2 {
+  margin: 7px 0 8px;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+
+.section-description {
+  max-width: 620px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ป้าย NEW MEMBER */
+.registration-card .member-badge {
+  flex-shrink: 0;
+  padding: 11px 16px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+/* กล่องโปรไฟล์ LINE */
+.line-profile-box {
+  margin: 0 0 28px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(204, 251, 241, 0.55),
+      rgba(255, 255, 255, 0.95)
+    );
+}
+
+.line-profile-picture {
+  width: 68px !important;
+  height: 68px !important;
+  min-width: 68px;
+  max-width: 68px;
+  max-height: 68px;
+  object-fit: cover;
+  border: 4px solid white;
+  border-radius: 50%;
+  box-shadow: 0 8px 22px rgba(15, 118, 110, 0.18);
+}
+
+.line-profile-box small {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.line-profile-box strong {
+  display: block;
+  font-size: 1.15rem;
+}
+
+/* ฟอร์ม */
+#registrationForm {
+  width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.form-field {
+  min-width: 0;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.form-field label span {
+  color: #c0392b;
+}
+
+.form-field input,
+.form-field select {
+  width: 100%;
+  min-height: 50px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  outline: none;
+  background: white;
+  color: var(--text);
+  font: inherit;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.form-field input::placeholder {
+  color: #9aa9a6;
+}
+
+.form-field input:hover,
+.form-field select:hover {
+  border-color: #a9ccc6;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.1);
+}
+
+/* บ้านเลขที่ + ปุ่มตรวจสอบ */
+.input-with-button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.compact-button {
+  min-width: 112px;
+  min-height: 50px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.field-message {
+  display: block;
+  min-height: 20px;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.field-message.success {
+  color: #087f5b;
+  font-weight: 650;
+}
+
+.field-message.error {
+  color: #c0392b;
+  font-weight: 650;
+}
+
+/* PDPA */
+.consent-box {
+  margin-top: 26px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #f7fbfa;
+}
+
+.check-row {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 12px;
+  align-items: flex-start;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  cursor: pointer;
+}
+
+.check-row + .check-row {
+  margin-top: 16px;
+}
+
+.check-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 4px 0 0;
+  accent-color: var(--primary);
+}
+
+/* ปุ่มด้านล่าง */
+.form-actions {
+  margin-top: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.form-actions .button {
+  min-width: 170px;
+  margin: 0;
+}
+
+/* ปรับปุ่มหลัก */
+#submitRegistrationButton {
+  background: var(--primary);
+  color: white;
+}
+
+#submitRegistrationButton:hover {
+  background: var(--primary-dark);
+}
+
+/* Tablet */
+@media (max-width: 760px) {
+  .registration-card .section-heading {
+    flex-direction: column;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .registration-card .member-badge {
+    align-self: flex-start;
+  }
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+  .registration-card {
+    padding: 22px 18px;
+    border-radius: 22px;
+  }
+
+  .line-profile-picture {
+    width: 58px !important;
+    height: 58px !important;
+    min-width: 58px;
+    max-width: 58px;
+    max-height: 58px;
+  }
+
+  .input-with-button {
+    grid-template-columns: 1fr;
+  }
+
+  .compact-button {
+    width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions .button {
+    width: 100%;
+  }
+
+  .consent-box {
+    padding: 17px;
+  }
+}
