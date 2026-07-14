@@ -2,142 +2,747 @@
 <html lang="th">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
   <meta name="theme-color" content="#0f766e">
-  <meta name="description" content="ระบบสมาชิกและศูนย์ข้อมูลหมู่บ้านภัสสร 56">
+
+  <meta
+    name="description"
+    content="ระบบสมาชิกและศูนย์ข้อมูลหมู่บ้านภัสสร 56"
+  >
+
   <title>หมู่บ้านภัสสร 56</title>
 
-  <link rel="manifest" href="/manifest.webmanifest">
-  <link rel="icon" href="/assets/img/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/assets/css/style.css">
+  <link
+    rel="manifest"
+    href="/manifest.webmanifest"
+  >
+
+  <link
+    rel="icon"
+    href="/assets/img/icon.svg"
+    type="image/svg+xml"
+  >
+
+  <link
+    rel="stylesheet"
+    href="/assets/css/style.css"
+  >
 </head>
+
 <body>
+
   <div id="app">
+
     <header class="topbar">
+
       <div class="brand">
-        <img src="/assets/img/icon.svg" alt="" class="brand-logo">
+
+        <img
+          src="/assets/img/icon.svg"
+          alt=""
+          class="brand-logo"
+        >
+
         <div>
-          <p class="eyebrow">VILLAGE PORTAL</p>
-          <h1>หมู่บ้านภัสสร 56</h1>
+          <p class="eyebrow">
+            VILLAGE PORTAL
+          </p>
+
+          <h1>
+            หมู่บ้านภัสสร 56
+          </h1>
         </div>
+
       </div>
-      <button id="logoutButton" class="button button-ghost hidden" type="button">ออกจากระบบ</button>
+
+      <button
+        id="logoutButton"
+        class="button button-ghost hidden"
+        type="button"
+      >
+        ออกจากระบบ
+      </button>
+
     </header>
 
+
     <main class="page-shell">
-      <section id="loginView" class="login-layout">
+
+      <!-- =========================
+           LOGIN VIEW
+      ========================== -->
+
+      <section
+        id="loginView"
+        class="login-layout"
+      >
+
         <div class="hero-card">
-          <span class="status-pill">ระบบทดสอบ Version 3.0</span>
-          <h2>ศูนย์กลางข้อมูลสำหรับลูกบ้าน</h2>
+
+          <span class="status-pill">
+            ระบบสมาชิก Version 3.1
+          </span>
+
+          <h2>
+            ศูนย์กลางข้อมูลสำหรับลูกบ้าน
+          </h2>
+
           <p>
-            ลงทะเบียน ตรวจสอบข้อมูลสมาชิก อ่านประกาศ เอกสาร แบบสอบถาม
-            และระบบลงคะแนนจากบัญชี LINE เดียว
+            ลงทะเบียน ตรวจสอบข้อมูลสมาชิก อ่านประกาศ เอกสาร
+            แบบสอบถาม และระบบลงคะแนนจากบัญชี LINE เดียว
           </p>
 
           <div class="feature-grid">
-            <article class="feature-item"><span>👤</span><strong>ข้อมูลสมาชิก</strong></article>
-            <article class="feature-item"><span>📢</span><strong>ข่าวสาร</strong></article>
-            <article class="feature-item"><span>📄</span><strong>เอกสาร</strong></article>
-            <article class="feature-item"><span>🗳️</span><strong>ลงคะแนน</strong></article>
+
+            <article class="feature-item">
+              <span>👤</span>
+              <strong>ข้อมูลสมาชิก</strong>
+            </article>
+
+            <article class="feature-item">
+              <span>📢</span>
+              <strong>ข่าวสาร</strong>
+            </article>
+
+            <article class="feature-item">
+              <span>📄</span>
+              <strong>เอกสาร</strong>
+            </article>
+
+            <article class="feature-item">
+              <span>🗳️</span>
+              <strong>ลงคะแนน</strong>
+            </article>
+
           </div>
+
         </div>
 
-        <div class="login-card">
-          <div class="login-icon">LINE</div>
-          <h2>เข้าสู่ระบบสมาชิก</h2>
-          <p>ระบบจะตรวจสอบ LINE User ID กับฐานข้อมูลสมาชิกก่อนเปิดสิทธิ์ใช้งาน</p>
 
-          <button id="lineLoginButton" class="button button-primary" type="button">
+        <div class="login-card">
+
+          <div class="login-icon">
+            LINE
+          </div>
+
+          <h2>
+            เข้าสู่ระบบสมาชิก
+          </h2>
+
+          <p>
+            ระบบจะตรวจสอบ LINE User ID กับฐานข้อมูลสมาชิก
+            ก่อนเปิดสิทธิ์ใช้งาน
+          </p>
+
+          <button
+            id="lineLoginButton"
+            class="button button-primary"
+            type="button"
+          >
             เข้าสู่ระบบด้วย LINE
           </button>
 
-          <button id="demoLoginButton" class="button button-secondary" type="button">
+          <button
+            id="demoLoginButton"
+            class="button button-secondary"
+            type="button"
+          >
             ทดลองหน้า Dashboard
           </button>
 
           <p class="small-note">
-            ปุ่ม LINE Login จะเริ่มทำงานหลังตั้งค่า Channel ID, Callback URL
-            และ Apps Script API ในไฟล์ <code>assets/js/config.js</code>
+            ผู้ใช้งานครั้งแรกจะถูกนำไปยังหน้าลงทะเบียนสมาชิก
           </p>
+
         </div>
+
       </section>
 
-      <section id="dashboardView" class="hidden">
-        <div class="welcome-panel">
-          <div>
-            <p class="eyebrow">ยินดีต้อนรับ</p>
-            <h2 id="memberName">สมาชิกหมู่บ้าน</h2>
-            <p id="memberMeta">บ้านเลขที่ — · สถานะสมาชิก</p>
+
+      <!-- =========================
+           REGISTRATION VIEW
+      ========================== -->
+
+      <section
+        id="registrationView"
+        class="hidden"
+      >
+
+        <div class="content-card registration-card">
+
+          <div class="section-heading">
+
+            <div>
+
+              <p class="eyebrow">
+                MEMBER REGISTRATION
+              </p>
+
+              <h2>
+                ลงทะเบียนตัวแทนบ้าน
+              </h2>
+
+              <p class="section-description">
+                บัญชี LINE นี้ยังไม่มีข้อมูลสมาชิก
+                กรุณากรอกข้อมูลเพื่อยืนยันสิทธิ์
+              </p>
+
+            </div>
+
+            <div class="member-badge">
+              NEW MEMBER
+            </div>
+
           </div>
-          <div class="member-badge">MEMBER</div>
+
+
+          <div class="line-profile-box">
+
+            <img
+              id="registerLinePicture"
+              class="line-profile-picture hidden"
+              alt="LINE Profile"
+            >
+
+            <div>
+
+              <small>
+                บัญชี LINE
+              </small>
+
+              <strong id="registerLineName">
+                ผู้ใช้งาน LINE
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <form
+            id="registrationForm"
+            novalidate
+          >
+
+            <div class="form-grid">
+
+
+              <div class="form-field">
+
+                <label for="houseNumber">
+                  บ้านเลขที่
+                  <span>*</span>
+                </label>
+
+                <div class="input-with-button">
+
+                  <input
+                    id="houseNumber"
+                    name="houseNumber"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="3"
+                    placeholder="1-364"
+                    autocomplete="off"
+                    required
+                  >
+
+                  <button
+                    id="checkHouseButton"
+                    class="button button-secondary compact-button"
+                    type="button"
+                  >
+                    ตรวจสอบ
+                  </button>
+
+                </div>
+
+                <small
+                  id="houseCheckMessage"
+                  class="field-message"
+                ></small>
+
+              </div>
+
+
+              <div class="form-field">
+
+                <label for="fullName">
+                  ชื่อ-นามสกุล
+                  <span>*</span>
+                </label>
+
+                <input
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  maxlength="150"
+                  required
+                >
+
+              </div>
+
+
+              <div class="form-field">
+
+                <label for="phone">
+                  เบอร์โทรศัพท์
+                  <span>*</span>
+                </label>
+
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  inputmode="numeric"
+                  maxlength="10"
+                  placeholder="0812345678"
+                  autocomplete="tel"
+                  required
+                >
+
+              </div>
+
+
+              <div class="form-field">
+
+                <label for="representativeStatus">
+                  สถานะผู้ลงทะเบียน
+                  <span>*</span>
+                </label>
+
+                <select
+                  id="representativeStatus"
+                  name="representativeStatus"
+                  required
+                >
+
+                  <option value="">
+                    กรุณาเลือก
+                  </option>
+
+                  <option value="เจ้าของบ้าน">
+                    เจ้าของบ้าน
+                  </option>
+
+                  <option value="ผู้อยู่อาศัยที่ได้รับมอบหมาย">
+                    ผู้อยู่อาศัยที่ได้รับมอบหมาย
+                  </option>
+
+                  <option value="ผู้แทนเจ้าของบ้าน">
+                    ผู้แทนเจ้าของบ้าน
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="form-field">
+
+                <label for="lineId">
+                  LINE ID
+                </label>
+
+                <input
+                  id="lineId"
+                  name="lineId"
+                  type="text"
+                  maxlength="100"
+                  autocomplete="off"
+                >
+
+              </div>
+
+
+              <div class="form-field">
+
+                <label for="email">
+                  อีเมล
+                </label>
+
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  maxlength="150"
+                  autocomplete="email"
+                >
+
+              </div>
+
+            </div>
+
+
+            <div class="consent-box">
+
+              <label class="check-row">
+
+                <input
+                  id="pdpaConsent"
+                  name="pdpaConsent"
+                  type="checkbox"
+                >
+
+                <span>
+                  ข้าพเจ้ายินยอมให้คณะทำงานจัดเก็บและใช้ข้อมูล
+                  เพื่อการบริหารสมาชิก การติดต่อสื่อสาร
+                  การตรวจสอบสิทธิ์ และการดำเนินงานของหมู่บ้าน
+                </span>
+
+              </label>
+
+
+              <label class="check-row">
+
+                <input
+                  id="certification"
+                  name="certification"
+                  type="checkbox"
+                >
+
+                <span>
+                  ข้าพเจ้ารับรองว่าเป็นเจ้าของบ้าน
+                  หรือได้รับมอบหมายจากเจ้าของบ้านเลขที่ดังกล่าว
+                  และข้อมูลที่ให้ไว้เป็นความจริง
+                </span>
+
+              </label>
+
+            </div>
+
+
+            <div class="form-actions">
+
+              <button
+                id="cancelRegistrationButton"
+                class="button button-ghost"
+                type="button"
+              >
+                ออกจากระบบ
+              </button>
+
+              <button
+                id="submitRegistrationButton"
+                class="button button-primary"
+                type="submit"
+              >
+                ยืนยันการลงทะเบียน
+              </button>
+
+            </div>
+
+          </form>
+
         </div>
+
+      </section>
+
+
+      <!-- =========================
+           DASHBOARD VIEW
+      ========================== -->
+
+      <section
+        id="dashboardView"
+        class="hidden"
+      >
+
+        <div class="welcome-panel">
+
+          <div>
+
+            <p class="eyebrow">
+              ยินดีต้อนรับ
+            </p>
+
+            <h2 id="memberName">
+              สมาชิกหมู่บ้าน
+            </h2>
+
+            <p id="memberMeta">
+              บ้านเลขที่ — · สถานะสมาชิก
+            </p>
+
+          </div>
+
+          <div
+            id="memberRoleBadge"
+            class="member-badge"
+          >
+            MEMBER
+          </div>
+
+        </div>
+
 
         <div class="menu-grid">
-          <button class="menu-card" data-module="profile">
-            <span class="menu-icon">👤</span>
-            <span><strong>ข้อมูลของฉัน</strong><small>ดูและแก้ไขข้อมูลส่วนตัว</small></span>
+
+          <button
+            class="menu-card"
+            data-module="profile"
+            type="button"
+          >
+
+            <span class="menu-icon">
+              👤
+            </span>
+
+            <span>
+
+              <strong>
+                ข้อมูลของฉัน
+              </strong>
+
+              <small>
+                ดูและแก้ไขข้อมูลส่วนตัว
+              </small>
+
+            </span>
+
           </button>
 
-          <button class="menu-card" data-module="announcements">
-            <span class="menu-icon">📢</span>
-            <span><strong>ข่าวสารและประกาศ</strong><small>ติดตามข้อมูลจากคณะทำงาน</small></span>
+
+          <button
+            class="menu-card"
+            data-module="announcements"
+            type="button"
+          >
+
+            <span class="menu-icon">
+              📢
+            </span>
+
+            <span>
+
+              <strong>
+                ข่าวสารและประกาศ
+              </strong>
+
+              <small>
+                ติดตามข้อมูลจากคณะทำงาน
+              </small>
+
+            </span>
+
           </button>
 
-          <button class="menu-card" data-module="documents">
-            <span class="menu-icon">📄</span>
-            <span><strong>เอกสารหมู่บ้าน</strong><small>เอกสาร Public และ Member</small></span>
+
+          <button
+            class="menu-card"
+            data-module="documents"
+            type="button"
+          >
+
+            <span class="menu-icon">
+              📄
+            </span>
+
+            <span>
+
+              <strong>
+                เอกสารหมู่บ้าน
+              </strong>
+
+              <small>
+                เอกสาร Public และ Member
+              </small>
+
+            </span>
+
           </button>
 
-          <button class="menu-card" data-module="vote">
-            <span class="menu-icon">🗳️</span>
-            <span><strong>ระบบลงคะแนน</strong><small>ตรวจสิทธิ์และป้องกันลงคะแนนซ้ำ</small></span>
+
+          <button
+            class="menu-card"
+            data-module="vote"
+            type="button"
+          >
+
+            <span class="menu-icon">
+              🗳️
+            </span>
+
+            <span>
+
+              <strong>
+                ระบบลงคะแนน
+              </strong>
+
+              <small>
+                ตรวจสิทธิ์และป้องกันลงคะแนนซ้ำ
+              </small>
+
+            </span>
+
           </button>
 
-          <button class="menu-card" data-module="survey">
-            <span class="menu-icon">📋</span>
-            <span><strong>แบบสอบถาม</strong><small>ตอบแบบสอบถามตามสิทธิ์สมาชิก</small></span>
+
+          <button
+            class="menu-card"
+            data-module="survey"
+            type="button"
+          >
+
+            <span class="menu-icon">
+              📋
+            </span>
+
+            <span>
+
+              <strong>
+                แบบสอบถาม
+              </strong>
+
+              <small>
+                ตอบแบบสอบถามตามสิทธิ์สมาชิก
+              </small>
+
+            </span>
+
           </button>
 
-          <button class="menu-card" data-module="maintenance">
-            <span class="menu-icon">🔧</span>
-            <span><strong>แจ้งปัญหา</strong><small>แนบรายละเอียดและรูปภาพ</small></span>
+
+          <button
+            class="menu-card"
+            data-module="maintenance"
+            type="button"
+          >
+
+            <span class="menu-icon">
+              🔧
+            </span>
+
+            <span>
+
+              <strong>
+                แจ้งปัญหา
+              </strong>
+
+              <small>
+                แนบรายละเอียดและรูปภาพ
+              </small>
+
+            </span>
+
           </button>
+
         </div>
 
+
         <section class="content-card">
+
           <div class="section-heading">
+
             <div>
-              <p class="eyebrow">LATEST UPDATE</p>
-              <h3>สถานะระบบ</h3>
+
+              <p class="eyebrow">
+                LATEST UPDATE
+              </p>
+
+              <h3>
+                สถานะระบบ
+              </h3>
+
             </div>
+
           </div>
+
 
           <div class="timeline">
+
             <div class="timeline-item done">
+
               <span></span>
-              <div><strong>Cloudflare Pages Frontend</strong><p>โครงหน้าเว็บพร้อม Deploy</p></div>
+
+              <div>
+
+                <strong>
+                  Cloudflare Pages Frontend
+                </strong>
+
+                <p>
+                  พร้อมใช้งาน
+                </p>
+
+              </div>
+
             </div>
-            <div class="timeline-item">
+
+
+            <div class="timeline-item done">
+
               <span></span>
-              <div><strong>LINE Login</strong><p>รอตั้งค่า Channel ID และ Callback URL</p></div>
+
+              <div>
+
+                <strong>
+                  LINE Login
+                </strong>
+
+                <p>
+                  เชื่อมต่อเรียบร้อย
+                </p>
+
+              </div>
+
             </div>
-            <div class="timeline-item">
+
+
+            <div class="timeline-item done">
+
               <span></span>
-              <div><strong>Apps Script API</strong><p>รอย้าย Logic จากระบบเดิมมาเป็น API</p></div>
+
+              <div>
+
+                <strong>
+                  Apps Script API
+                </strong>
+
+                <p>
+                  เชื่อมกับฐานข้อมูลสมาชิกแล้ว
+                </p>
+
+              </div>
+
             </div>
+
           </div>
+
         </section>
+
       </section>
+
     </main>
 
-    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <div
+      id="toast"
+      class="toast"
+      role="status"
+      aria-live="polite"
+    ></div>
+
 
     <footer>
-      <p>Passorn 56 Village Portal · Version 3.0 Starter</p>
+
+      <p>
+        Passorn 56 Village Portal · Version 3.1
+      </p>
+
     </footer>
+
   </div>
 
+
   <script src="/assets/js/config.js"></script>
+
   <script src="/assets/js/app.js"></script>
+
 </body>
 </html>
