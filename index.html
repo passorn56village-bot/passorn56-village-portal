@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="description" content="ระบบสมาชิกและศูนย์ข้อมูลหมู่บ้านภัสสร 56">
+  <title>หมู่บ้านภัสสร 56</title>
+
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/assets/img/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <img src="/assets/img/icon.svg" alt="" class="brand-logo">
+        <div>
+          <p class="eyebrow">VILLAGE PORTAL</p>
+          <h1>หมู่บ้านภัสสร 56</h1>
+        </div>
+      </div>
+      <button id="logoutButton" class="button button-ghost hidden" type="button">ออกจากระบบ</button>
+    </header>
+
+    <main class="page-shell">
+      <section id="loginView" class="login-layout">
+        <div class="hero-card">
+          <span class="status-pill">ระบบทดสอบ Version 3.0</span>
+          <h2>ศูนย์กลางข้อมูลสำหรับลูกบ้าน</h2>
+          <p>
+            ลงทะเบียน ตรวจสอบข้อมูลสมาชิก อ่านประกาศ เอกสาร แบบสอบถาม
+            และระบบลงคะแนนจากบัญชี LINE เดียว
+          </p>
+
+          <div class="feature-grid">
+            <article class="feature-item"><span>👤</span><strong>ข้อมูลสมาชิก</strong></article>
+            <article class="feature-item"><span>📢</span><strong>ข่าวสาร</strong></article>
+            <article class="feature-item"><span>📄</span><strong>เอกสาร</strong></article>
+            <article class="feature-item"><span>🗳️</span><strong>ลงคะแนน</strong></article>
+          </div>
+        </div>
+
+        <div class="login-card">
+          <div class="login-icon">LINE</div>
+          <h2>เข้าสู่ระบบสมาชิก</h2>
+          <p>ระบบจะตรวจสอบ LINE User ID กับฐานข้อมูลสมาชิกก่อนเปิดสิทธิ์ใช้งาน</p>
+
+          <button id="lineLoginButton" class="button button-primary" type="button">
+            เข้าสู่ระบบด้วย LINE
+          </button>
+
+          <button id="demoLoginButton" class="button button-secondary" type="button">
+            ทดลองหน้า Dashboard
+          </button>
+
+          <p class="small-note">
+            ปุ่ม LINE Login จะเริ่มทำงานหลังตั้งค่า Channel ID, Callback URL
+            และ Apps Script API ในไฟล์ <code>assets/js/config.js</code>
+          </p>
+        </div>
+      </section>
+
+      <section id="dashboardView" class="hidden">
+        <div class="welcome-panel">
+          <div>
+            <p class="eyebrow">ยินดีต้อนรับ</p>
+            <h2 id="memberName">สมาชิกหมู่บ้าน</h2>
+            <p id="memberMeta">บ้านเลขที่ — · สถานะสมาชิก</p>
+          </div>
+          <div class="member-badge">MEMBER</div>
+        </div>
+
+        <div class="menu-grid">
+          <button class="menu-card" data-module="profile">
+            <span class="menu-icon">👤</span>
+            <span><strong>ข้อมูลของฉัน</strong><small>ดูและแก้ไขข้อมูลส่วนตัว</small></span>
+          </button>
+
+          <button class="menu-card" data-module="announcements">
+            <span class="menu-icon">📢</span>
+            <span><strong>ข่าวสารและประกาศ</strong><small>ติดตามข้อมูลจากคณะทำงาน</small></span>
+          </button>
+
+          <button class="menu-card" data-module="documents">
+            <span class="menu-icon">📄</span>
+            <span><strong>เอกสารหมู่บ้าน</strong><small>เอกสาร Public และ Member</small></span>
+          </button>
+
+          <button class="menu-card" data-module="vote">
+            <span class="menu-icon">🗳️</span>
+            <span><strong>ระบบลงคะแนน</strong><small>ตรวจสิทธิ์และป้องกันลงคะแนนซ้ำ</small></span>
+          </button>
+
+          <button class="menu-card" data-module="survey">
+            <span class="menu-icon">📋</span>
+            <span><strong>แบบสอบถาม</strong><small>ตอบแบบสอบถามตามสิทธิ์สมาชิก</small></span>
+          </button>
+
+          <button class="menu-card" data-module="maintenance">
+            <span class="menu-icon">🔧</span>
+            <span><strong>แจ้งปัญหา</strong><small>แนบรายละเอียดและรูปภาพ</small></span>
+          </button>
+        </div>
+
+        <section class="content-card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">LATEST UPDATE</p>
+              <h3>สถานะระบบ</h3>
+            </div>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item done">
+              <span></span>
+              <div><strong>Cloudflare Pages Frontend</strong><p>โครงหน้าเว็บพร้อม Deploy</p></div>
+            </div>
+            <div class="timeline-item">
+              <span></span>
+              <div><strong>LINE Login</strong><p>รอตั้งค่า Channel ID และ Callback URL</p></div>
+            </div>
+            <div class="timeline-item">
+              <span></span>
+              <div><strong>Apps Script API</strong><p>รอย้าย Logic จากระบบเดิมมาเป็น API</p></div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <footer>
+      <p>Passorn 56 Village Portal · Version 3.0 Starter</p>
+    </footer>
+  </div>
+
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/app.js"></script>
+</body>
+</html>
