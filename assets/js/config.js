@@ -5,7 +5,7 @@
 window.APP_CONFIG = {
   appName: "Passorn 56 Village Portal",
 
-  apiBaseUrl: "",
+  apiBaseUrl: "https://script.google.com/macros/s/AKfycbwZIv5XBj-6ULhtucYj4acR6niZvP4-LQLRtJmzb0Qnac6Q4AObT98uGHTbuEQmqbb2/exec",
 
   line: {
     channelId: "2010691661",
