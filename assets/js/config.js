@@ -10,10 +10,10 @@ window.APP_CONFIG = {
 
   line: {
     // ใส่ LINE Login Channel ID
-    channelId: "",
+    channelId: "2010691661",
 
     // ต้องตรงกับ Callback URL ที่ตั้งใน LINE Developers
-    callbackUrl: window.location.origin + "/"
+    callbackUrl: window.location.origin + "https://passorn56-village-portal.pages.dev/"
   },
 
   demoMode: true
