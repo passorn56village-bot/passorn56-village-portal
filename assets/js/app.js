@@ -1,546 +1,386 @@
 (() => {
-  "use strict";
+  'use strict';
 
   const config = window.APP_CONFIG || {};
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
 
-  const loginView = document.querySelector("#loginView");
-  const dashboardView = document.querySelector("#dashboardView");
-  const logoutButton = document.querySelector("#logoutButton");
-  const lineLoginButton = document.querySelector("#lineLoginButton");
-  const demoLoginButton = document.querySelector("#demoLoginButton");
-  const toast = document.querySelector("#toast");
-
-  const SESSION_TOKEN_KEY = "passorn56_session_token";
-  const MEMBER_KEY = "passorn56_member";
-  const OAUTH_STATE_KEY = "line_oauth_state";
-
-  const state = {
-    member: null
+  const views = {
+    login: $('#loginView'),
+    register: $('#registrationView'),
+    dashboard: $('#dashboardView')
   };
 
-  function showToast(message, duration = 4000) {
-    if (!toast) {
-      console.log(message);
-      return;
-    }
+  const buttons = {
+    login: $('#lineLoginButton'),
+    demo: $('#demoLoginButton'),
+    logout: $('#logoutButton'),
+    checkHouse: $('#checkHouseButton'),
+    submitRegister: $('#submitRegistrationButton'),
+    cancelRegister: $('#cancelRegistrationButton')
+  };
 
+  const form = $('#registrationForm');
+  const toast = $('#toast');
+
+  const KEY = {
+    session: 'passorn56_session_token',
+    member: 'passorn56_member',
+    oauthState: 'line_oauth_state'
+  };
+
+  const state = { member: null, houseAvailable: false };
+
+  function showToast(message, duration = 4500) {
+    if (!toast) return console.log(message);
     toast.textContent = message;
-    toast.classList.add("show");
-
-    window.clearTimeout(showToast.timer);
-
-    showToast.timer = window.setTimeout(() => {
-      toast.classList.remove("show");
-    }, duration);
+    toast.classList.add('show');
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => toast.classList.remove('show'), duration);
   }
 
-  function setButtonLoading(button, loading, loadingText = "กำลังดำเนินการ...") {
+  function setLoading(button, loading, text = 'กำลังดำเนินการ...') {
     if (!button) return;
-
     if (loading) {
-      button.dataset.originalText = button.textContent;
-      button.textContent = loadingText;
+      button.dataset.oldText = button.textContent;
+      button.textContent = text;
       button.disabled = true;
-      return;
-    }
-
-    button.textContent =
-      button.dataset.originalText || button.textContent;
-
-    button.disabled = false;
-  }
-
-  function cleanCallbackUrl() {
-    history.replaceState(
-      {},
-      document.title,
-      window.location.pathname
-    );
-  }
-
-  function saveMember(member) {
-    sessionStorage.setItem(
-      MEMBER_KEY,
-      JSON.stringify(member)
-    );
-  }
-
-  function getSavedMember() {
-    const savedMember = sessionStorage.getItem(MEMBER_KEY);
-
-    if (!savedMember) return null;
-
-    try {
-      return JSON.parse(savedMember);
-    } catch (error) {
-      console.error("Invalid saved member:", error);
-      sessionStorage.removeItem(MEMBER_KEY);
-      return null;
+    } else {
+      button.textContent = button.dataset.oldText || button.textContent;
+      button.disabled = false;
     }
   }
 
-  function saveSessionToken(sessionToken) {
-    if (!sessionToken) return;
+  function hideViews() {
+    Object.values(views).forEach((view) => view?.classList.add('hidden'));
+  }
 
-    sessionStorage.setItem(
-      SESSION_TOKEN_KEY,
-      sessionToken
-    );
+  function cleanUrl() {
+    history.replaceState({}, document.title, window.location.pathname);
+  }
+
+  function saveSession(token, member) {
+    if (token) sessionStorage.setItem(KEY.session, token);
+    if (member) sessionStorage.setItem(KEY.member, JSON.stringify(member));
+  }
+
+  function clearSession() {
+    Object.values(KEY).forEach((key) => sessionStorage.removeItem(key));
   }
 
   function getSessionToken() {
-    return sessionStorage.getItem(SESSION_TOKEN_KEY) || "";
+    return sessionStorage.getItem(KEY.session) || '';
   }
 
-  function clearLocalSession() {
-    sessionStorage.removeItem(SESSION_TOKEN_KEY);
-    sessionStorage.removeItem(MEMBER_KEY);
-    sessionStorage.removeItem(OAUTH_STATE_KEY);
-  }
-
-  function showDashboard(member) {
-    const normalizedMember = {
-      displayName:
-        member?.displayName ||
-        member?.lineDisplayName ||
-        "สมาชิกหมู่บ้าน",
-
-      houseNo:
-        member?.houseNo ||
-        member?.houseNumber ||
-        "-",
-
-      status:
-        member?.status ||
-        "สมาชิก",
-
-      role:
-        member?.role ||
-        "Member",
-
-      registered:
-        Boolean(member?.registered),
-
-      linePictureUrl:
-        member?.linePictureUrl || "",
-
-      registration:
-        member?.registration || null
+  function normalizeMember(member = {}) {
+    return {
+      registered: Boolean(member.registered),
+      displayName: member.displayName || member.lineDisplayName || 'สมาชิกหมู่บ้าน',
+      lineDisplayName: member.lineDisplayName || '',
+      linePictureUrl: member.linePictureUrl || '',
+      houseNo: member.houseNo || member.houseNumber || '-',
+      status: member.status || 'สมาชิก',
+      role: member.role || 'Member',
+      registration: member.registration || null
     };
+  }
 
-    state.member = normalizedMember;
-    saveMember(normalizedMember);
+  async function callApi(payload) {
+    if (!config.apiBaseUrl) throw new Error('ยังไม่ได้ตั้งค่า API URL');
 
-    const memberName = document.querySelector("#memberName");
-    const memberMeta = document.querySelector("#memberMeta");
+    const response = await fetch(config.apiBaseUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-    if (memberName) {
-      memberName.textContent = normalizedMember.displayName;
+    const raw = await response.text();
+    let result;
+    try {
+      result = JSON.parse(raw);
+    } catch {
+      console.error('API raw response:', raw);
+      throw new Error('API ส่งข้อมูลกลับมาไม่ถูกต้อง');
     }
 
-    if (memberMeta) {
-      memberMeta.textContent =
-        `บ้านเลขที่ ${normalizedMember.houseNo} · ${normalizedMember.status}`;
+    if (!response.ok || result.success === false) {
+      throw new Error(result.message || 'ระบบไม่สามารถดำเนินการได้');
     }
 
-    loginView?.classList.add("hidden");
-    dashboardView?.classList.remove("hidden");
-    logoutButton?.classList.remove("hidden");
+    return result;
   }
 
   function showLogin() {
     state.member = null;
+    hideViews();
+    views.login?.classList.remove('hidden');
+    buttons.logout?.classList.add('hidden');
+  }
 
-    dashboardView?.classList.add("hidden");
-    loginView?.classList.remove("hidden");
-    logoutButton?.classList.add("hidden");
+  function showRegistration(member) {
+    const m = normalizeMember(member);
+    state.member = m;
+    state.houseAvailable = false;
+    saveSession('', m);
+
+    hideViews();
+    views.register?.classList.remove('hidden');
+    buttons.logout?.classList.remove('hidden');
+
+    $('#registerLineName').textContent = m.lineDisplayName || m.displayName;
+    $('#fullName').value = m.lineDisplayName || m.displayName;
+
+    const picture = $('#registerLinePicture');
+    if (picture && m.linePictureUrl) {
+      picture.src = m.linePictureUrl;
+      picture.classList.remove('hidden');
+    }
+  }
+
+  function showDashboard(member) {
+    const m = normalizeMember(member);
+    state.member = m;
+    saveSession('', m);
+
+    $('#memberName').textContent = m.displayName;
+    $('#memberMeta').textContent = `บ้านเลขที่ ${m.houseNo} · ${m.status}`;
+    const badge = $('#memberRoleBadge');
+    if (badge) badge.textContent = m.role.toUpperCase();
+
+    hideViews();
+    views.dashboard?.classList.remove('hidden');
+    buttons.logout?.classList.remove('hidden');
+  }
+
+  function routeMember(member) {
+    const m = normalizeMember(member);
+    m.registered ? showDashboard(m) : showRegistration(m);
   }
 
   function beginLineLogin() {
-    const channelId = String(
-      config?.line?.channelId || ""
-    ).trim();
+    const channelId = String(config?.line?.channelId || '').trim();
+    const callbackUrl = String(config?.line?.callbackUrl || '').trim();
 
-    const callbackUrl = String(
-      config?.line?.callbackUrl || ""
-    ).trim();
+    if (!channelId) return showToast('ยังไม่ได้ตั้งค่า LINE Channel ID');
+    if (!callbackUrl) return showToast('ยังไม่ได้ตั้งค่า LINE Callback URL');
 
-    if (!channelId) {
-      showToast(
-        "ยังไม่ได้ตั้งค่า LINE Channel ID ใน config.js"
-      );
-      return;
-    }
-
-    if (!callbackUrl) {
-      showToast(
-        "ยังไม่ได้ตั้งค่า LINE Callback URL ใน config.js"
-      );
-      return;
-    }
-
-    const stateToken =
-      typeof crypto.randomUUID === "function"
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random()
-            .toString(36)
-            .slice(2)}`;
-
-    sessionStorage.setItem(
-      OAUTH_STATE_KEY,
-      stateToken
-    );
+    const oauthState = crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`;
+    sessionStorage.setItem(KEY.oauthState, oauthState);
 
     const params = new URLSearchParams({
-      response_type: "code",
+      response_type: 'code',
       client_id: channelId,
       redirect_uri: callbackUrl,
-      state: stateToken,
-      scope: "profile openid"
+      state: oauthState,
+      scope: 'profile openid'
     });
 
-    window.location.href =
-      `https://access.line.me/oauth2/v2.1/authorize?${params.toString()}`;
+    location.href = `https://access.line.me/oauth2/v2.1/authorize?${params}`;
   }
 
   async function handleLineCallback() {
-    const params = new URLSearchParams(
-      window.location.search
-    );
-
-    const code = params.get("code");
-    const returnedState = params.get("state");
-    const lineError = params.get("error");
-    const lineErrorDescription =
-      params.get("error_description");
+    const params = new URLSearchParams(location.search);
+    const code = params.get('code');
+    const returnedState = params.get('state');
+    const lineError = params.get('error_description') || params.get('error');
 
     if (lineError) {
-      cleanCallbackUrl();
+      cleanUrl();
+      return showToast(lineError);
+    }
+    if (!code) return;
 
-      showToast(
-        lineErrorDescription ||
-        "ผู้ใช้ยกเลิกการเข้าสู่ระบบด้วย LINE"
-      );
+    setLoading(buttons.login, true, 'กำลังตรวจสอบข้อมูล...');
 
+    try {
+      const savedState = sessionStorage.getItem(KEY.oauthState);
+      if (!savedState || savedState !== returnedState) {
+        throw new Error('ตรวจสอบ LINE Login ไม่สำเร็จ กรุณาลองใหม่');
+      }
+
+      const result = await callApi({
+        action: 'lineLogin',
+        code,
+        redirectUri: config.line.callbackUrl,
+        state: returnedState
+      });
+
+      if (!result.sessionToken || !result.member) {
+        throw new Error('API ส่งข้อมูล Login กลับมาไม่ครบ');
+      }
+
+      saveSession(result.sessionToken, result.member);
+      sessionStorage.removeItem(KEY.oauthState);
+      cleanUrl();
+      routeMember(result.member);
+      showToast(result.member.registered ? 'เข้าสู่ระบบเรียบร้อยแล้ว' : 'กรุณาลงทะเบียนสมาชิก');
+    } catch (error) {
+      console.error(error);
+      clearSession();
+      showLogin();
+      cleanUrl();
+      showToast(error.message || 'เข้าสู่ระบบไม่สำเร็จ', 7000);
+    } finally {
+      setLoading(buttons.login, false);
+    }
+  }
+
+  async function checkHouse() {
+    const input = $('#houseNumber');
+    const value = String(input?.value || '').trim();
+    const message = $('#houseCheckMessage');
+    state.houseAvailable = false;
+
+    if (!/^\d{1,3}$/.test(value) || Number(value) < 1 || Number(value) > 364) {
+      message.textContent = 'กรุณากรอกบ้านเลขที่ตั้งแต่ 1 ถึง 364';
+      message.className = 'field-message error';
       return;
     }
 
-    if (!code) return;
+    setLoading(buttons.checkHouse, true, 'กำลังตรวจ...');
+    try {
+      const result = await callApi({
+        action: 'checkHouseNumber',
+        sessionToken: getSessionToken(),
+        houseNumber: value
+      });
+      state.houseAvailable = Boolean(result.available);
+      message.textContent = result.message || '';
+      message.className = `field-message ${result.available ? 'success' : 'error'}`;
+    } catch (error) {
+      message.textContent = error.message;
+      message.className = 'field-message error';
+    } finally {
+      setLoading(buttons.checkHouse, false);
+    }
+  }
 
-    setButtonLoading(
-      lineLoginButton,
-      true,
-      "กำลังตรวจสอบข้อมูล..."
-    );
+  function collectRegistrationData() {
+    const houseNumber = $('#houseNumber').value.trim();
+    const fullName = $('#fullName').value.trim();
+    const phone = $('#phone').value.replace(/\D/g, '');
+    const representativeStatus = $('#representativeStatus').value;
+    const email = $('#email').value.trim();
+
+    if (!state.houseAvailable) throw new Error('กรุณากดตรวจสอบบ้านเลขที่ก่อน');
+    if (!fullName) throw new Error('กรุณากรอกชื่อ-นามสกุล');
+    if (!/^0\d{8,9}$/.test(phone)) throw new Error('กรุณากรอกเบอร์โทรให้ถูกต้อง');
+    if (!representativeStatus) throw new Error('กรุณาเลือกสถานะผู้ลงทะเบียน');
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('อีเมลไม่ถูกต้อง');
+    if (!$('#pdpaConsent').checked) throw new Error('กรุณายินยอม PDPA');
+    if (!$('#certification').checked) throw new Error('กรุณารับรองสถานะตัวแทนบ้าน');
+
+    return {
+      houseNumber,
+      fullName,
+      phone,
+      lineId: $('#lineId').value.trim(),
+      email,
+      representativeStatus,
+      pdpaConsent: true,
+      certification: true,
+      pdpaVersion: 'PDPA-CONSENT-V1.0-2026-07-13',
+      publicIp: 'Cloudflare Pages',
+      userAgent: navigator.userAgent
+    };
+  }
+
+  async function submitRegistration(event) {
+    event.preventDefault();
+    setLoading(buttons.submitRegister, true, 'กำลังบันทึกข้อมูล...');
 
     try {
-      const savedState =
-        sessionStorage.getItem(OAUTH_STATE_KEY);
+      const sessionToken = getSessionToken();
+      const formData = collectRegistrationData();
+      formData.sessionToken = sessionToken;
 
-      if (!savedState) {
-        throw new Error(
-          "ไม่พบข้อมูลยืนยันการเข้าสู่ระบบ กรุณากดเข้าสู่ระบบใหม่"
-        );
-      }
+      const result = await callApi({
+        action: 'registerRepresentative',
+        sessionToken,
+        formData
+      });
 
-      if (!returnedState || returnedState !== savedState) {
-        throw new Error(
-          "ตรวจสอบความถูกต้องของ LINE Login ไม่สำเร็จ กรุณาลองใหม่"
-        );
-      }
+      const reg = result.registration;
+      if (!reg) throw new Error('ไม่พบข้อมูลสมาชิกหลังลงทะเบียน');
 
-      if (!config.apiBaseUrl) {
-        throw new Error(
-          "ยังไม่ได้ตั้งค่า API URL ใน config.js"
-        );
-      }
+      showDashboard({
+        registered: true,
+        displayName: reg.fullName,
+        lineDisplayName: state.member?.lineDisplayName || '',
+        linePictureUrl: state.member?.linePictureUrl || '',
+        houseNo: reg.houseNumber,
+        status: reg.status || 'Active',
+        role: reg.role || 'Member',
+        registration: reg
+      });
 
-      const response = await fetch(
-        config.apiBaseUrl,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            action: "lineLogin",
-            code: code,
-            redirectUri: config.line.callbackUrl,
-            state: returnedState
-          })
-        }
-      );
-
-      const responseText = await response.text();
-
-      console.log(
-        "Login API HTTP status:",
-        response.status
-      );
-
-      console.log(
-        "Login API raw response:",
-        responseText
-      );
-
-      let result;
-
-      try {
-        result = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error(
-          "Login API JSON parse error:",
-          parseError
-        );
-
-        throw new Error(
-          "API ส่งข้อมูลกลับมาไม่ถูกต้อง: " +
-          responseText.slice(0, 180)
-        );
-      }
-
-      if (!response.ok || !result.success) {
-        console.error(
-          "Login API returned error:",
-          result
-        );
-
-        throw new Error(
-          result.message ||
-          "LINE Login ไม่สำเร็จ"
-        );
-      }
-
-      if (!result.sessionToken) {
-        throw new Error(
-          "API ไม่ได้ส่ง Session Token กลับมา"
-        );
-      }
-
-      if (!result.member) {
-        throw new Error(
-          "API ไม่ได้ส่งข้อมูลสมาชิกกลับมา"
-        );
-      }
-
-      saveSessionToken(result.sessionToken);
-      sessionStorage.removeItem(OAUTH_STATE_KEY);
-
-      showDashboard(result.member);
-      cleanCallbackUrl();
-
-      if (result.member.registered) {
-        showToast("เข้าสู่ระบบเรียบร้อยแล้ว");
-      } else {
-        showToast(
-          "เข้าสู่ระบบแล้ว แต่บัญชีนี้ยังไม่ได้ลงทะเบียน"
-        );
-      }
+      showToast(result.message || 'ลงทะเบียนเรียบร้อยแล้ว');
     } catch (error) {
-      console.error(
-        "LINE login error:",
-        error
-      );
-
-      clearLocalSession();
-      showLogin();
-      cleanCallbackUrl();
-
-      showToast(
-        error?.message ||
-        "เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่",
-        7000
-      );
+      console.error(error);
+      showToast(error.message || 'ลงทะเบียนไม่สำเร็จ', 7000);
     } finally {
-      setButtonLoading(
-        lineLoginButton,
-        false
-      );
+      setLoading(buttons.submitRegister, false);
     }
   }
 
   async function restoreSession() {
-    const sessionToken = getSessionToken();
-
-    if (!sessionToken || !config.apiBaseUrl) {
-      const savedMember = getSavedMember();
-
-      if (savedMember) {
-        showDashboard(savedMember);
-      }
-
-      return;
-    }
+    const token = getSessionToken();
+    if (!token) return showLogin();
 
     try {
-      const response = await fetch(
-        config.apiBaseUrl,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            action: "getSession",
-            sessionToken: sessionToken
-          })
-        }
-      );
-
-      const responseText = await response.text();
-
-      let result;
-
-      try {
-        result = JSON.parse(responseText);
-      } catch {
-        throw new Error(
-          "ไม่สามารถอ่านข้อมูล Session ได้"
-        );
-      }
-
-      if (
-        !response.ok ||
-        !result.success ||
-        !result.authenticated
-      ) {
-        throw new Error(
-          result.message ||
-          "Session หมดอายุ"
-        );
-      }
-
-      showDashboard(result.member);
-    } catch (error) {
-      console.warn(
-        "Restore session failed:",
-        error
-      );
-
-      clearLocalSession();
+      const result = await callApi({ action: 'getSession', sessionToken: token });
+      if (!result.authenticated || !result.member) throw new Error('Session หมดอายุ');
+      routeMember(result.member);
+    } catch {
+      clearSession();
       showLogin();
     }
   }
 
-  async function logoutFromSystem() {
-    const sessionToken = getSessionToken();
-
-    setButtonLoading(
-      logoutButton,
-      true,
-      "กำลังออกจากระบบ..."
-    );
-
+  async function logout() {
+    setLoading(buttons.logout, true, 'กำลังออกจากระบบ...');
     try {
-      if (
-        sessionToken &&
-        config.apiBaseUrl
-      ) {
-        const response = await fetch(
-          config.apiBaseUrl,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              action: "logout",
-              sessionToken: sessionToken
-            })
-          }
-        );
-
-        const responseText =
-          await response.text();
-
-        console.log(
-          "Logout API response:",
-          responseText
-        );
-      }
+      const token = getSessionToken();
+      if (token) await callApi({ action: 'logout', sessionToken: token });
     } catch (error) {
-      console.warn(
-        "Logout API error:",
-        error
-      );
+      console.warn(error);
     } finally {
-      clearLocalSession();
+      clearSession();
+      form?.reset();
       showLogin();
-      cleanCallbackUrl();
-
-      setButtonLoading(
-        logoutButton,
-        false
-      );
-
-      showToast(
-        "ออกจากระบบเรียบร้อยแล้ว"
-      );
+      cleanUrl();
+      setLoading(buttons.logout, false);
+      showToast('ออกจากระบบเรียบร้อยแล้ว');
     }
-  }
-
-  function loginDemo() {
-    showDashboard({
-      displayName: "สมาชิกตัวอย่าง",
-      houseNo: "56/100",
-      status: "สมาชิกผ่านการยืนยัน",
-      role: "Member",
-      registered: true
-    });
-
-    showToast("เข้าสู่โหมดทดลองแล้ว");
   }
 
   function bindEvents() {
-    lineLoginButton?.addEventListener(
-      "click",
-      beginLineLogin
-    );
+    buttons.login?.addEventListener('click', beginLineLogin);
+    buttons.demo?.addEventListener('click', () => showDashboard({ registered: true, displayName: 'สมาชิกตัวอย่าง', houseNo: '100', status: 'Active' }));
+    buttons.logout?.addEventListener('click', logout);
+    buttons.cancelRegister?.addEventListener('click', logout);
+    buttons.checkHouse?.addEventListener('click', checkHouse);
+    form?.addEventListener('submit', submitRegistration);
 
-    demoLoginButton?.addEventListener(
-      "click",
-      loginDemo
-    );
+    $('#houseNumber')?.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3);
+      state.houseAvailable = false;
+      $('#houseCheckMessage').textContent = '';
+    });
 
-    logoutButton?.addEventListener(
-      "click",
-      logoutFromSystem
-    );
+    $('#phone')?.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+    });
 
-    document
-      .querySelectorAll(".menu-card")
-      .forEach((button) => {
-        button.addEventListener(
-          "click",
-          () => {
-            const moduleName =
-              button.dataset.module || "";
-
-            showToast(
-              `โมดูล ${moduleName} จะพัฒนาในขั้นตอนถัดไป`
-            );
-          }
-        );
-      });
+    $$('.menu-card').forEach((button) => button.addEventListener('click', () => showToast(`โมดูล ${button.dataset.module || ''} จะพัฒนาในขั้นตอนถัดไป`)));
   }
 
-  async function initializeApp() {
+  async function init() {
     bindEvents();
-
-    const params = new URLSearchParams(
-      window.location.search
-    );
-
-    if (
-      params.has("code") ||
-      params.has("error")
-    ) {
-      await handleLineCallback();
-      return;
-    }
-
-    await restoreSession();
+    const params = new URLSearchParams(location.search);
+    if (params.has('code') || params.has('error')) return handleLineCallback();
+    return restoreSession();
   }
 
-  initializeApp();
+  init();
 })();

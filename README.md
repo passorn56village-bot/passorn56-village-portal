@@ -1,45 +1,11 @@
-# Passorn 56 Village Portal
+# Passorn56 Registration Frontend V3.1
 
-Frontend Starter สำหรับระบบสมาชิกหมู่บ้านภัสสร 56
+ชุดไฟล์เพิ่มระบบลงทะเบียนหลัง LINE Login
 
-## Technology
+วางทับไฟล์เดิม:
+- index.html
+- assets/js/app.js
 
-- Cloudflare Pages
-- HTML / CSS / Vanilla JavaScript
-- LINE Login
-- Google Apps Script API
-- Google Sheets
-- Google Drive
+นำเนื้อหาใน assets/css/registration-additions.css ไปต่อท้าย assets/css/style.css เดิม
 
-## Deploy ครั้งแรก
-
-1. อัปโหลดไฟล์ทั้งหมดในโฟลเดอร์นี้เข้า GitHub Repository
-2. ใน Cloudflare Pages ตั้งค่า:
-   - Production branch: `main`
-   - Framework preset: `None`
-   - Build command: เว้นว่าง
-   - Build output directory: `/`
-3. กด Save and Deploy
-
-## ทดสอบหน้าเว็บ
-
-กดปุ่ม **ทดลองหน้า Dashboard** โดยยังไม่ต้องตั้งค่า LINE Login
-
-## ตั้งค่า LINE Login ภายหลัง
-
-แก้ไฟล์:
-
-`assets/js/config.js`
-
-ใส่:
-
-- `line.channelId`
-- `apiBaseUrl`
-
-ห้ามใส่ LINE Channel Secret ใน Frontend
-
-## สถาปัตยกรรม
-
-Browser → Cloudflare Pages → Apps Script API → Google Sheets / Google Drive / LINE API
-
-การแลก LINE authorization code เป็น access token ต้องทำที่ Apps Script Backend เท่านั้น
+Backend ต้องรองรับ action: lineLogin, getSession, logout, checkHouseNumber, registerRepresentative

@@ -1,0 +1,45 @@
+<section id="registrationView" class="hidden">
+  <div class="content-card registration-card">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">MEMBER REGISTRATION</p>
+        <h2>ลงทะเบียนตัวแทนบ้าน</h2>
+        <p class="section-description">บัญชี LINE นี้ยังไม่มีข้อมูลสมาชิก กรุณากรอกข้อมูลเพื่อยืนยันสิทธิ์</p>
+      </div>
+      <div class="member-badge">NEW MEMBER</div>
+    </div>
+
+    <div class="line-profile-box">
+      <img id="registerLinePicture" class="line-profile-picture hidden" alt="LINE profile">
+      <div><small>บัญชี LINE</small><strong id="registerLineName">ผู้ใช้งาน LINE</strong></div>
+    </div>
+
+    <form id="registrationForm" novalidate>
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="houseNumber">บ้านเลขที่ <span>*</span></label>
+          <div class="input-with-button">
+            <input id="houseNumber" type="text" inputmode="numeric" maxlength="3" placeholder="1-364" required>
+            <button id="checkHouseButton" class="button button-secondary compact-button" type="button">ตรวจสอบ</button>
+          </div>
+          <small id="houseCheckMessage" class="field-message"></small>
+        </div>
+        <div class="form-field"><label for="fullName">ชื่อ-นามสกุล <span>*</span></label><input id="fullName" type="text" maxlength="150" required></div>
+        <div class="form-field"><label for="phone">เบอร์โทรศัพท์ <span>*</span></label><input id="phone" type="tel" inputmode="numeric" maxlength="10" placeholder="0812345678" required></div>
+        <div class="form-field"><label for="representativeStatus">สถานะผู้ลงทะเบียน <span>*</span></label><select id="representativeStatus" required><option value="">กรุณาเลือก</option><option value="เจ้าของบ้าน">เจ้าของบ้าน</option><option value="ผู้อยู่อาศัยที่ได้รับมอบหมาย">ผู้อยู่อาศัยที่ได้รับมอบหมาย</option><option value="ผู้แทนเจ้าของบ้าน">ผู้แทนเจ้าของบ้าน</option></select></div>
+        <div class="form-field"><label for="lineId">LINE ID</label><input id="lineId" type="text" maxlength="100"></div>
+        <div class="form-field"><label for="email">อีเมล</label><input id="email" type="email" maxlength="150"></div>
+      </div>
+
+      <div class="consent-box">
+        <label class="check-row"><input id="pdpaConsent" type="checkbox"><span>ยินยอมให้คณะทำงานจัดเก็บและใช้ข้อมูลเพื่อการบริหารสมาชิก การติดต่อสื่อสาร และการตรวจสอบสิทธิ์</span></label>
+        <label class="check-row"><input id="certification" type="checkbox"><span>รับรองว่าเป็นเจ้าของบ้านหรือได้รับมอบหมายจากเจ้าของบ้าน และข้อมูลเป็นความจริง</span></label>
+      </div>
+
+      <div class="form-actions">
+        <button id="cancelRegistrationButton" class="button button-ghost" type="button">ออกจากระบบ</button>
+        <button id="submitRegistrationButton" class="button button-primary" type="submit">ยืนยันการลงทะเบียน</button>
+      </div>
+    </form>
+  </div>
+</section>
