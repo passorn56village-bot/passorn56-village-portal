@@ -6,9 +6,11 @@
   const loginView = document.querySelector("#loginView");
   const registrationView = document.querySelector("#registrationView");
   const dashboardView = document.querySelector("#dashboardView");
+
   const logoutButton = document.querySelector("#logoutButton");
   const lineLoginButton = document.querySelector("#lineLoginButton");
   const demoLoginButton = document.querySelector("#demoLoginButton");
+
   const registrationForm = document.querySelector("#registrationForm");
   const checkHouseButton = document.querySelector("#checkHouseButton");
   const submitRegistrationButton = document.querySelector("#submitRegistrationButton");
@@ -26,15 +28,13 @@
   };
 
   function showToast(message, duration = 4500) {
-    if (!toast) {
-      console.log(message);
-      return;
-    }
+    if (!toast) return console.log(message);
 
     toast.textContent = String(message || "");
     toast.classList.add("show");
-    window.clearTimeout(showToast.timer);
-    showToast.timer = window.setTimeout(() => {
+
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => {
       toast.classList.remove("show");
     }, duration);
   }
@@ -67,8 +67,8 @@
     sessionStorage.setItem(MEMBER_KEY, JSON.stringify(member));
   }
 
-  function saveSessionToken(sessionToken) {
-    if (sessionToken) sessionStorage.setItem(SESSION_TOKEN_KEY, sessionToken);
+  function saveSessionToken(token) {
+    if (token) sessionStorage.setItem(SESSION_TOKEN_KEY, token);
   }
 
   function getSessionToken() {
@@ -88,19 +88,17 @@
 
     const response = await fetch(config.apiBaseUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
-    const responseText = await response.text();
-    let result;
+    const text = await response.text();
 
+    let result;
     try {
-      result = JSON.parse(responseText);
+      result = JSON.parse(text);
     } catch {
-      console.error("API raw response:", responseText);
+      console.error("API raw response:", text);
       throw new Error("API ส่งข้อมูลกลับมาไม่ถูกต้อง");
     }
 
@@ -132,10 +130,11 @@
   }
 
   function showRegistration(member) {
-    const normalizedMember = normalizeMember(member);
-    state.member = normalizedMember;
-    saveMember(normalizedMember);
+    const normalized = normalizeMember(member);
+
+    state.member = normalized;
     state.houseAvailable = false;
+    saveMember(normalized);
 
     hideAllViews();
     registrationView?.classList.remove("hidden");
@@ -147,24 +146,18 @@
 
     if (lineName) {
       lineName.textContent =
-        normalizedMember.lineDisplayName ||
-        normalizedMember.displayName ||
-        "ผู้ใช้งาน LINE";
+        normalized.lineDisplayName || normalized.displayName || "ผู้ใช้งาน LINE";
     }
 
     if (fullName && !fullName.value) {
-      fullName.value =
-        normalizedMember.lineDisplayName ||
-        normalizedMember.displayName ||
-        "";
+      fullName.value = normalized.lineDisplayName || normalized.displayName || "";
     }
 
     if (linePicture) {
-      if (normalizedMember.linePictureUrl) {
-        linePicture.src = normalizedMember.linePictureUrl;
+      if (normalized.linePictureUrl) {
+        linePicture.src = normalized.linePictureUrl;
         linePicture.classList.remove("hidden");
       } else {
-        linePicture.removeAttribute("src");
         linePicture.classList.add("hidden");
       }
     }
@@ -176,22 +169,16 @@
   }
 
   function showDashboard(member) {
-    const normalizedMember = normalizeMember(member);
-    state.member = normalizedMember;
-    saveMember(normalizedMember);
+    const normalized = normalizeMember(member);
 
-    const memberName = document.querySelector("#memberName");
-    const memberMeta = document.querySelector("#memberMeta");
-    const roleBadge = document.querySelector("#memberRoleBadge");
+    state.member = normalized;
+    saveMember(normalized);
 
-    if (memberName) memberName.textContent = normalizedMember.displayName;
-    if (memberMeta) {
-      memberMeta.textContent =
-        `บ้านเลขที่ ${normalizedMember.houseNo} · ${normalizedMember.status}`;
-    }
-    if (roleBadge) {
-      roleBadge.textContent = String(normalizedMember.role || "Member").toUpperCase();
-    }
+    document.querySelector("#memberName").textContent = normalized.displayName;
+    document.querySelector("#memberMeta").textContent =
+      `บ้านเลขที่ ${normalized.houseNo} · ${normalized.status}`;
+    document.querySelector("#memberRoleBadge").textContent =
+      String(normalized.role).toUpperCase();
 
     hideAllViews();
     dashboardView?.classList.remove("hidden");
@@ -199,35 +186,38 @@
   }
 
   function routeMember(member) {
-    const normalizedMember = normalizeMember(member);
-    if (normalizedMember.registered) {
-      showDashboard(normalizedMember);
-    } else {
-      showRegistration(normalizedMember);
-    }
+    const normalized = normalizeMember(member);
+    normalized.registered ? showDashboard(normalized) : showRegistration(normalized);
   }
 
-  function createOauthState() {
+  function isMobileDevice() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+
+  function isInsideLineApp() {
+    return /Line\//i.test(navigator.userAgent);
+  }
+
+  function createStateToken() {
     return typeof crypto.randomUUID === "function"
       ? crypto.randomUUID()
       : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
 
-  function startWebLineLogin() {
+  function beginLineLogin() {
     const channelId = String(config?.line?.channelId || "").trim();
     const callbackUrl = String(config?.line?.callbackUrl || "").trim();
+    const liffUrl = String(config?.line?.liffUrl || "").trim();
 
-    if (!channelId) {
-      showToast("ยังไม่ได้ตั้งค่า LINE Channel ID");
+    if (!channelId) return showToast("ยังไม่ได้ตั้งค่า LINE Channel ID");
+    if (!callbackUrl) return showToast("ยังไม่ได้ตั้งค่า LINE Callback URL");
+
+    if (isMobileDevice() && !isInsideLineApp() && liffUrl) {
+      window.location.href = liffUrl;
       return;
     }
 
-    if (!callbackUrl) {
-      showToast("ยังไม่ได้ตั้งค่า LINE Callback URL");
-      return;
-    }
-
-    const stateToken = createOauthState();
+    const stateToken = createStateToken();
     sessionStorage.setItem(OAUTH_STATE_KEY, stateToken);
 
     const params = new URLSearchParams({
@@ -240,21 +230,6 @@
 
     window.location.href =
       `https://access.line.me/oauth2/v2.1/authorize?${params.toString()}`;
-  }
-
-  function beginLineLogin() {
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isInsideLine = /Line\//i.test(navigator.userAgent);
-    const liffUrl = String(config?.line?.liffUrl || "").trim();
-
-    // มือถือที่เปิดจาก Chrome/Safari ให้ส่งเข้า LIFF URL ก่อน
-    if (isMobile && !isInsideLine && liffUrl) {
-      window.location.href = liffUrl;
-      return;
-    }
-
-    // เมื่ออยู่ใน LINE Browser แล้ว ใช้ OAuth เดิมต่อได้ทันที
-    startWebLineLogin();
   }
 
   async function handleLineCallback() {
@@ -303,26 +278,26 @@
           : "เข้าสู่ระบบแล้ว กรุณาลงทะเบียนสมาชิก"
       );
     } catch (error) {
-      console.error("LINE login error:", error);
+      console.error(error);
       clearLocalSession();
       showLogin();
       cleanCallbackUrl();
-      showToast(error?.message || "เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่", 7000);
+      showToast(error.message || "เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่", 7000);
     } finally {
       setButtonLoading(lineLoginButton, false);
     }
   }
 
   async function checkHouseNumber() {
-    const houseInput = document.querySelector("#houseNumber");
-    const houseNumber = String(houseInput?.value || "").trim();
+    const houseNumber = String(
+      document.querySelector("#houseNumber")?.value || ""
+    ).trim();
+
     state.houseAvailable = false;
 
     if (!/^\d{1,3}$/.test(houseNumber) || Number(houseNumber) < 1 || Number(houseNumber) > 364) {
-      if (houseCheckMessage) {
-        houseCheckMessage.textContent = "กรุณากรอกเลขบ้านตั้งแต่ 1 ถึง 364";
-        houseCheckMessage.className = "field-message error";
-      }
+      houseCheckMessage.textContent = "กรุณากรอกบ้านเลขที่ตั้งแต่ 1 ถึง 364";
+      houseCheckMessage.className = "field-message error";
       return;
     }
 
@@ -336,23 +311,18 @@
       });
 
       state.houseAvailable = Boolean(result.available);
-
-      if (houseCheckMessage) {
-        houseCheckMessage.textContent = result.message || "";
-        houseCheckMessage.className =
-          "field-message " + (result.available ? "success" : "error");
-      }
+      houseCheckMessage.textContent = result.message || "";
+      houseCheckMessage.className =
+        "field-message " + (result.available ? "success" : "error");
     } catch (error) {
-      if (houseCheckMessage) {
-        houseCheckMessage.textContent = error.message;
-        houseCheckMessage.className = "field-message error";
-      }
+      houseCheckMessage.textContent = error.message;
+      houseCheckMessage.className = "field-message error";
     } finally {
       setButtonLoading(checkHouseButton, false);
     }
   }
 
-  function validateRegistrationForm() {
+  function getRegistrationData() {
     const houseNumber = String(document.querySelector("#houseNumber")?.value || "").trim();
     const fullName = String(document.querySelector("#fullName")?.value || "").trim();
     const phone = String(document.querySelector("#phone")?.value || "").replace(/\D/g, "");
@@ -376,12 +346,8 @@
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       throw new Error("กรุณากรอกอีเมลให้ถูกต้อง");
     }
-    if (!pdpaConsent) {
-      throw new Error("กรุณายินยอมตามรายละเอียดการเก็บและใช้ข้อมูลส่วนบุคคล");
-    }
-    if (!certification) {
-      throw new Error("กรุณารับรองสถานะเจ้าของบ้านหรือผู้ได้รับมอบหมาย");
-    }
+    if (!pdpaConsent) throw new Error("กรุณายินยอมตามรายละเอียดการเก็บและใช้ข้อมูลส่วนบุคคล");
+    if (!certification) throw new Error("กรุณารับรองสถานะเจ้าของบ้านหรือผู้ได้รับมอบหมาย");
 
     return {
       houseNumber,
@@ -403,7 +369,7 @@
     setButtonLoading(submitRegistrationButton, true, "กำลังบันทึกข้อมูล...");
 
     try {
-      const formData = validateRegistrationForm();
+      const formData = getRegistrationData();
       const sessionToken = getSessionToken();
 
       if (!sessionToken) throw new Error("ไม่พบ Session กรุณาเข้าสู่ระบบใหม่");
@@ -411,10 +377,7 @@
       const result = await callApi({
         action: "registerRepresentative",
         sessionToken,
-        formData: {
-          ...formData,
-          sessionToken
-        }
+        formData: { ...formData, sessionToken }
       });
 
       if (!result.registration) {
@@ -434,7 +397,7 @@
 
       showToast(result.message || "ลงทะเบียนเรียบร้อยแล้ว");
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error(error);
       showToast(error.message || "ลงทะเบียนไม่สำเร็จ", 7000);
     } finally {
       setButtonLoading(submitRegistrationButton, false);
@@ -461,7 +424,6 @@
 
       routeMember(result.member);
     } catch (error) {
-      console.warn("Restore session failed:", error);
       clearLocalSession();
       showLogin();
     }
@@ -473,13 +435,10 @@
 
     try {
       if (sessionToken) {
-        await callApi({
-          action: "logout",
-          sessionToken
-        });
+        await callApi({ action: "logout", sessionToken });
       }
     } catch (error) {
-      console.warn("Logout API error:", error);
+      console.warn(error);
     } finally {
       clearLocalSession();
       registrationForm?.reset();
@@ -513,10 +472,8 @@
     document.querySelector("#houseNumber")?.addEventListener("input", (event) => {
       event.target.value = event.target.value.replace(/\D/g, "").slice(0, 3);
       state.houseAvailable = false;
-      if (houseCheckMessage) {
-        houseCheckMessage.textContent = "";
-        houseCheckMessage.className = "field-message";
-      }
+      houseCheckMessage.textContent = "";
+      houseCheckMessage.className = "field-message";
     });
 
     document.querySelector("#phone")?.addEventListener("input", (event) => {

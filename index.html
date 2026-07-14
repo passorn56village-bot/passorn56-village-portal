@@ -2,743 +2,671 @@
 <html lang="th">
 <head>
   <meta charset="utf-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
-  >
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f766e">
-
-  <meta
-    name="description"
-    content="ระบบสมาชิกและศูนย์ข้อมูลหมู่บ้านภัสสร 56"
-  >
-
+  <meta name="description" content="ระบบสมาชิกและศูนย์ข้อมูลหมู่บ้านภัสสร 56">
   <title>หมู่บ้านภัสสร 56</title>
 
-  <link
-    rel="manifest"
-    href="/manifest.webmanifest"
-  >
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/assets/img/icon.svg" type="image/svg+xml">
 
-  <link
-    rel="icon"
-    href="/assets/img/icon.svg"
-    type="image/svg+xml"
-  >
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --primary-soft: #ccfbf1;
+      --line: #06c755;
+      --bg: #f3f8f7;
+      --surface: #ffffff;
+      --text: #17312e;
+      --muted: #6b7f7b;
+      --border: #dce9e6;
+      --danger: #c0392b;
+      --success: #087f5b;
+      --shadow: 0 18px 45px rgba(15, 118, 110, .10);
+    }
 
-  <link
-    rel="stylesheet"
-    href="/assets/css/style.css"
-  >
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Noto Sans Thai", Tahoma, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(204,251,241,.78), transparent 34rem),
+        linear-gradient(180deg, #f8fbfa, var(--bg));
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    img { display: block; max-width: 100%; }
+    .hidden { display: none !important; }
+
+    .topbar {
+      min-height: 74px;
+      padding: 12px clamp(16px, 4vw, 52px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-logo { width: 44px; height: 44px; }
+    .brand h1 { margin: 2px 0 0; font-size: 1.08rem; }
+    .eyebrow {
+      margin: 0;
+      color: var(--primary);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .12em;
+    }
+
+    .page-shell {
+      width: min(1120px, calc(100% - 28px));
+      margin: 34px auto;
+    }
+
+    .button {
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 14px;
+      font-weight: 800;
+      transition: .18s ease;
+    }
+
+    .button:hover:not(:disabled) { transform: translateY(-1px); }
+    .button:disabled { opacity: .65; cursor: not-allowed; }
+    .button-primary { color: white; background: var(--line); }
+    .button-secondary { color: var(--primary-dark); background: var(--primary-soft); }
+    .button-ghost {
+      color: var(--primary-dark);
+      background: transparent;
+      border: 1px solid var(--border);
+    }
+
+    .card,
+    .hero-card,
+    .login-card,
+    .welcome-panel,
+    .menu-card {
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      background: rgba(255,255,255,.97);
+      box-shadow: var(--shadow);
+    }
+
+    .login-layout {
+      display: grid;
+      grid-template-columns: 1.18fr .82fr;
+      gap: 24px;
+    }
+
+    .hero-card {
+      min-height: 500px;
+      padding: clamp(30px, 6vw, 68px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: white;
+      background: linear-gradient(145deg, rgba(15,118,110,.98), rgba(17,94,89,.98));
+    }
+
+    .status-pill {
+      width: fit-content;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 999px;
+      background: rgba(255,255,255,.11);
+      font-weight: 800;
+      font-size: .82rem;
+    }
+
+    .hero-card h2 {
+      margin: 24px 0 14px;
+      font-size: clamp(2rem, 5vw, 3.9rem);
+      line-height: 1.08;
+    }
+
+    .hero-card > p {
+      max-width: 680px;
+      color: rgba(255,255,255,.84);
+      line-height: 1.8;
+    }
+
+    .feature-grid {
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+    }
+
+    .feature-item {
+      padding: 15px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 16px;
+      background: rgba(255,255,255,.08);
+    }
+
+    .login-card {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .login-icon {
+      width: 74px;
+      height: 74px;
+      margin: 0 auto 18px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--line);
+      border-radius: 22px;
+      font-weight: 900;
+    }
+
+    .login-card h2 { margin: 0 0 10px; }
+    .login-card p { color: var(--muted); line-height: 1.7; }
+    .login-card .button { width: 100%; margin-top: 12px; }
+    .small-note { font-size: .8rem; }
+
+    .registration-card {
+      width: min(920px,100%);
+      margin: 0 auto;
+      padding: clamp(24px, 4vw, 42px);
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .section-heading h2 {
+      margin: 7px 0 8px;
+      font-size: clamp(1.7rem,4vw,2.25rem);
+    }
+
+    .section-description {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .member-badge {
+      padding: 10px 15px;
+      border-radius: 999px;
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      font-size: .74rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      white-space: nowrap;
+    }
+
+    .line-profile-box {
+      margin: 24px 0 28px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(204,251,241,.65), white);
+    }
+
+    .line-profile-picture {
+      width: 64px !important;
+      height: 64px !important;
+      min-width: 64px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid white;
+    }
+
+    .line-profile-box small,
+    .line-profile-box strong { display: block; }
+    .line-profile-box small { color: var(--muted); margin-bottom: 3px; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 18px;
+    }
+
+    .form-field label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+
+    .form-field label span { color: var(--danger); }
+
+    .form-field input,
+    .form-field select {
+      width: 100%;
+      min-height: 50px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      outline: none;
+      background: white;
+      color: var(--text);
+    }
+
+    .form-field input:focus,
+    .form-field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(15,118,110,.10);
+    }
+
+    .input-with-button {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+
+    .compact-button { min-width: 110px; }
+
+    .field-message {
+      display: block;
+      min-height: 20px;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    .field-message.success { color: var(--success); font-weight: 700; }
+    .field-message.error { color: var(--danger); font-weight: 700; }
+
+    .consent-box {
+      margin-top: 24px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #f8fbfa;
+    }
+
+    .check-row {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 10px;
+      align-items: flex-start;
+      line-height: 1.7;
+      font-size: .9rem;
+    }
+
+    .check-row + .check-row { margin-top: 14px; }
+    .check-row input { width: 18px; height: 18px; margin-top: 4px; accent-color: var(--primary); }
+
+    .form-actions {
+      margin-top: 24px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .form-actions .button { min-width: 170px; }
+
+    .welcome-panel {
+      padding: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .welcome-panel h2 {
+      margin: 6px 0;
+      font-size: clamp(1.6rem,4vw,2.35rem);
+    }
+
+    .welcome-panel p:last-child { margin: 0; color: var(--muted); }
+
+    .menu-grid {
+      margin: 22px 0;
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 16px;
+    }
+
+    .menu-card {
+      min-height: 138px;
+      padding: 22px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      color: var(--text);
+      text-align: left;
+      transition: .18s ease;
+    }
+
+    .menu-card:hover { transform: translateY(-3px); }
+    .menu-icon { font-size: 1.75rem; }
+    .menu-card strong,
+    .menu-card small { display: block; }
+    .menu-card small { margin-top: 7px; color: var(--muted); line-height: 1.5; }
+
+    .system-card { padding: 26px; }
+    .timeline { margin-top: 20px; }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 12px;
+      padding-bottom: 20px;
+    }
+
+    .timeline-item > span {
+      width: 13px;
+      height: 13px;
+      margin-top: 4px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 5px #edf5f3;
+    }
+
+    .timeline-item p { margin: 5px 0 0; color: var(--muted); }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 50;
+      max-width: calc(100% - 32px);
+      padding: 12px 18px;
+      color: white;
+      background: #17312e;
+      border-radius: 12px;
+      opacity: 0;
+      transform: translate(-50%,16px);
+      transition: .2s ease;
+      pointer-events: none;
+    }
+
+    .toast.show { opacity: 1; transform: translate(-50%,0); }
+
+    footer {
+      padding: 22px;
+      color: var(--muted);
+      text-align: center;
+      font-size: .78rem;
+    }
+
+    @media (max-width: 860px) {
+      .login-layout { grid-template-columns: 1fr; }
+      .hero-card { min-height: auto; }
+      .menu-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      .section-heading { flex-direction: column; }
+      .form-grid { grid-template-columns: 1fr; }
+      .member-badge { align-self: flex-start; }
+    }
+
+    @media (max-width: 560px) {
+      .page-shell { width: calc(100% - 20px); margin: 18px auto; }
+      .topbar { padding: 11px 12px; }
+      .brand-logo { width: 40px; height: 40px; }
+      .hero-card,
+      .login-card,
+      .registration-card,
+      .welcome-panel,
+      .system-card { padding: 22px 17px; border-radius: 21px; }
+      .feature-grid,
+      .menu-grid { grid-template-columns: 1fr; }
+      .welcome-panel { flex-direction: column; align-items: flex-start; }
+      .input-with-button { grid-template-columns: 1fr; }
+      .compact-button { width: 100%; }
+      .form-actions { flex-direction: column-reverse; }
+      .form-actions .button { width: 100%; }
+      .line-profile-picture { width: 56px !important; height: 56px !important; min-width: 56px; }
+    }
+  </style>
 </head>
 
 <body>
-
   <div id="app">
-
     <header class="topbar">
-
       <div class="brand">
-
-        <img
-          src="/assets/img/icon.svg"
-          alt=""
-          class="brand-logo"
-        >
-
+        <img src="/assets/img/icon.svg" alt="" class="brand-logo">
         <div>
-          <p class="eyebrow">
-            VILLAGE PORTAL
-          </p>
-
-          <h1>
-            หมู่บ้านภัสสร 56
-          </h1>
+          <p class="eyebrow">VILLAGE PORTAL</p>
+          <h1>หมู่บ้านภัสสร 56</h1>
         </div>
-
       </div>
 
-      <button
-        id="logoutButton"
-        class="button button-ghost hidden"
-        type="button"
-      >
+      <button id="logoutButton" class="button button-ghost hidden" type="button">
         ออกจากระบบ
       </button>
-
     </header>
 
-
     <main class="page-shell">
-
-      <!-- =========================
-           LOGIN VIEW
-      ========================== -->
-
-      <section
-        id="loginView"
-        class="login-layout"
-      >
-
+      <section id="loginView" class="login-layout">
         <div class="hero-card">
-
-          <span class="status-pill">
-            ระบบสมาชิก Version 3.1
-          </span>
-
-          <h2>
-            ศูนย์กลางข้อมูลสำหรับลูกบ้าน
-          </h2>
-
+          <span class="status-pill">ระบบสมาชิก Version 3.2</span>
+          <h2>ศูนย์กลางข้อมูลสำหรับลูกบ้าน</h2>
           <p>
             ลงทะเบียน ตรวจสอบข้อมูลสมาชิก อ่านประกาศ เอกสาร
             แบบสอบถาม และระบบลงคะแนนจากบัญชี LINE เดียว
           </p>
 
           <div class="feature-grid">
-
-            <article class="feature-item">
-              <span>👤</span>
-              <strong>ข้อมูลสมาชิก</strong>
-            </article>
-
-            <article class="feature-item">
-              <span>📢</span>
-              <strong>ข่าวสาร</strong>
-            </article>
-
-            <article class="feature-item">
-              <span>📄</span>
-              <strong>เอกสาร</strong>
-            </article>
-
-            <article class="feature-item">
-              <span>🗳️</span>
-              <strong>ลงคะแนน</strong>
-            </article>
-
+            <article class="feature-item"><span>👤</span><strong>ข้อมูลสมาชิก</strong></article>
+            <article class="feature-item"><span>📢</span><strong>ข่าวสาร</strong></article>
+            <article class="feature-item"><span>📄</span><strong>เอกสาร</strong></article>
+            <article class="feature-item"><span>🗳️</span><strong>ลงคะแนน</strong></article>
           </div>
-
         </div>
 
-
         <div class="login-card">
+          <div class="login-icon">LINE</div>
+          <h2>เข้าสู่ระบบสมาชิก</h2>
+          <p>ระบบจะตรวจสอบ LINE User ID กับฐานข้อมูลสมาชิกก่อนเปิดสิทธิ์ใช้งาน</p>
 
-          <div class="login-icon">
-            LINE
-          </div>
-
-          <h2>
-            เข้าสู่ระบบสมาชิก
-          </h2>
-
-          <p>
-            ระบบจะตรวจสอบ LINE User ID กับฐานข้อมูลสมาชิก
-            ก่อนเปิดสิทธิ์ใช้งาน
-          </p>
-
-          <button
-            id="lineLoginButton"
-            class="button button-primary"
-            type="button"
-          >
+          <button id="lineLoginButton" class="button button-primary" type="button">
             เข้าสู่ระบบด้วย LINE
           </button>
 
-          <button
-            id="demoLoginButton"
-            class="button button-secondary"
-            type="button"
-          >
+          <button id="demoLoginButton" class="button button-secondary" type="button">
             ทดลองหน้า Dashboard
           </button>
 
-          <p class="small-note">
-            ผู้ใช้งานครั้งแรกจะถูกนำไปยังหน้าลงทะเบียนสมาชิก
-          </p>
-
+          <p class="small-note">บนมือถือ ระบบจะเปิดผ่านแอป LINE</p>
         </div>
-
       </section>
 
-
-      <!-- =========================
-           REGISTRATION VIEW
-      ========================== -->
-
-      <section
-        id="registrationView"
-        class="hidden"
-      >
-
-        <div class="content-card registration-card">
-
+      <section id="registrationView" class="hidden">
+        <div class="card registration-card">
           <div class="section-heading">
-
             <div>
-
-              <p class="eyebrow">
-                MEMBER REGISTRATION
-              </p>
-
-              <h2>
-                ลงทะเบียนตัวแทนบ้าน
-              </h2>
-
+              <p class="eyebrow">MEMBER REGISTRATION</p>
+              <h2>ลงทะเบียนตัวแทนบ้าน</h2>
               <p class="section-description">
-                บัญชี LINE นี้ยังไม่มีข้อมูลสมาชิก
-                กรุณากรอกข้อมูลเพื่อยืนยันสิทธิ์
+                บัญชี LINE นี้ยังไม่มีข้อมูลสมาชิก กรุณากรอกข้อมูลเพื่อยืนยันสิทธิ์
               </p>
-
             </div>
-
-            <div class="member-badge">
-              NEW MEMBER
-            </div>
-
+            <div class="member-badge">NEW MEMBER</div>
           </div>
-
 
           <div class="line-profile-box">
-
-            <img
-              id="registerLinePicture"
-              class="line-profile-picture hidden"
-              alt="LINE Profile"
-            >
-
+            <img id="registerLinePicture" class="line-profile-picture hidden" alt="LINE Profile">
             <div>
-
-              <small>
-                บัญชี LINE
-              </small>
-
-              <strong id="registerLineName">
-                ผู้ใช้งาน LINE
-              </strong>
-
+              <small>บัญชี LINE</small>
+              <strong id="registerLineName">ผู้ใช้งาน LINE</strong>
             </div>
-
           </div>
 
-
-          <form
-            id="registrationForm"
-            novalidate
-          >
-
+          <form id="registrationForm" novalidate>
             <div class="form-grid">
-
-
               <div class="form-field">
-
-                <label for="houseNumber">
-                  บ้านเลขที่
-                  <span>*</span>
-                </label>
-
+                <label for="houseNumber">บ้านเลขที่ <span>*</span></label>
                 <div class="input-with-button">
-
-                  <input
-                    id="houseNumber"
-                    name="houseNumber"
-                    type="text"
-                    inputmode="numeric"
-                    maxlength="3"
-                    placeholder="1-364"
-                    autocomplete="off"
-                    required
-                  >
-
-                  <button
-                    id="checkHouseButton"
-                    class="button button-secondary compact-button"
-                    type="button"
-                  >
+                  <input id="houseNumber" name="houseNumber" type="text"
+                    inputmode="numeric" maxlength="3" placeholder="1-364"
+                    autocomplete="off" required>
+                  <button id="checkHouseButton"
+                    class="button button-secondary compact-button" type="button">
                     ตรวจสอบ
                   </button>
-
                 </div>
-
-                <small
-                  id="houseCheckMessage"
-                  class="field-message"
-                ></small>
-
+                <small id="houseCheckMessage" class="field-message"></small>
               </div>
 
-
               <div class="form-field">
-
-                <label for="fullName">
-                  ชื่อ-นามสกุล
-                  <span>*</span>
-                </label>
-
-                <input
-                  id="fullName"
-                  name="fullName"
-                  type="text"
-                  maxlength="150"
-                  required
-                >
-
+                <label for="fullName">ชื่อ-นามสกุล <span>*</span></label>
+                <input id="fullName" name="fullName" type="text" maxlength="150" required>
               </div>
 
-
               <div class="form-field">
-
-                <label for="phone">
-                  เบอร์โทรศัพท์
-                  <span>*</span>
-                </label>
-
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  inputmode="numeric"
-                  maxlength="10"
-                  placeholder="0812345678"
-                  autocomplete="tel"
-                  required
-                >
-
+                <label for="phone">เบอร์โทรศัพท์ <span>*</span></label>
+                <input id="phone" name="phone" type="tel"
+                  inputmode="numeric" maxlength="10"
+                  placeholder="0812345678" autocomplete="tel" required>
               </div>
 
-
               <div class="form-field">
-
-                <label for="representativeStatus">
-                  สถานะผู้ลงทะเบียน
-                  <span>*</span>
-                </label>
-
-                <select
-                  id="representativeStatus"
-                  name="representativeStatus"
-                  required
-                >
-
-                  <option value="">
-                    กรุณาเลือก
-                  </option>
-
-                  <option value="เจ้าของบ้าน">
-                    เจ้าของบ้าน
-                  </option>
-
-                  <option value="ผู้อยู่อาศัยที่ได้รับมอบหมาย">
-                    ผู้อยู่อาศัยที่ได้รับมอบหมาย
-                  </option>
-
-                  <option value="ผู้แทนเจ้าของบ้าน">
-                    ผู้แทนเจ้าของบ้าน
-                  </option>
-
+                <label for="representativeStatus">สถานะผู้ลงทะเบียน <span>*</span></label>
+                <select id="representativeStatus" name="representativeStatus" required>
+                  <option value="">กรุณาเลือก</option>
+                  <option value="เจ้าของบ้าน">เจ้าของบ้าน</option>
+                  <option value="ผู้อยู่อาศัยที่ได้รับมอบหมาย">ผู้อยู่อาศัยที่ได้รับมอบหมาย</option>
+                  <option value="ผู้แทนเจ้าของบ้าน">ผู้แทนเจ้าของบ้าน</option>
                 </select>
-
               </div>
-
 
               <div class="form-field">
-
-                <label for="lineId">
-                  LINE ID
-                </label>
-
-                <input
-                  id="lineId"
-                  name="lineId"
-                  type="text"
-                  maxlength="100"
-                  autocomplete="off"
-                >
-
+                <label for="lineId">LINE ID</label>
+                <input id="lineId" name="lineId" type="text" maxlength="100">
               </div>
-
 
               <div class="form-field">
-
-                <label for="email">
-                  อีเมล
-                </label>
-
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  maxlength="150"
-                  autocomplete="email"
-                >
-
+                <label for="email">อีเมล</label>
+                <input id="email" name="email" type="email" maxlength="150">
               </div>
-
             </div>
 
-
             <div class="consent-box">
-
               <label class="check-row">
-
-                <input
-                  id="pdpaConsent"
-                  name="pdpaConsent"
-                  type="checkbox"
-                >
-
+                <input id="pdpaConsent" name="pdpaConsent" type="checkbox">
                 <span>
                   ข้าพเจ้ายินยอมให้คณะทำงานจัดเก็บและใช้ข้อมูล
                   เพื่อการบริหารสมาชิก การติดต่อสื่อสาร
                   การตรวจสอบสิทธิ์ และการดำเนินงานของหมู่บ้าน
                 </span>
-
               </label>
-
 
               <label class="check-row">
-
-                <input
-                  id="certification"
-                  name="certification"
-                  type="checkbox"
-                >
-
+                <input id="certification" name="certification" type="checkbox">
                 <span>
-                  ข้าพเจ้ารับรองว่าเป็นเจ้าของบ้าน
-                  หรือได้รับมอบหมายจากเจ้าของบ้านเลขที่ดังกล่าว
+                  ข้าพเจ้ารับรองว่าเป็นเจ้าของบ้าน หรือได้รับมอบหมายจากเจ้าของบ้านเลขที่ดังกล่าว
                   และข้อมูลที่ให้ไว้เป็นความจริง
                 </span>
-
               </label>
-
             </div>
-
 
             <div class="form-actions">
-
-              <button
-                id="cancelRegistrationButton"
-                class="button button-ghost"
-                type="button"
-              >
+              <button id="cancelRegistrationButton" class="button button-ghost" type="button">
                 ออกจากระบบ
               </button>
-
-              <button
-                id="submitRegistrationButton"
-                class="button button-primary"
-                type="submit"
-              >
+              <button id="submitRegistrationButton" class="button button-primary" type="submit">
                 ยืนยันการลงทะเบียน
               </button>
-
             </div>
-
           </form>
-
         </div>
-
       </section>
 
-
-      <!-- =========================
-           DASHBOARD VIEW
-      ========================== -->
-
-      <section
-        id="dashboardView"
-        class="hidden"
-      >
-
+      <section id="dashboardView" class="hidden">
         <div class="welcome-panel">
-
           <div>
-
-            <p class="eyebrow">
-              ยินดีต้อนรับ
-            </p>
-
-            <h2 id="memberName">
-              สมาชิกหมู่บ้าน
-            </h2>
-
-            <p id="memberMeta">
-              บ้านเลขที่ — · สถานะสมาชิก
-            </p>
-
+            <p class="eyebrow">ยินดีต้อนรับ</p>
+            <h2 id="memberName">สมาชิกหมู่บ้าน</h2>
+            <p id="memberMeta">บ้านเลขที่ — · สถานะสมาชิก</p>
           </div>
-
-          <div
-            id="memberRoleBadge"
-            class="member-badge"
-          >
-            MEMBER
-          </div>
-
+          <div id="memberRoleBadge" class="member-badge">MEMBER</div>
         </div>
-
 
         <div class="menu-grid">
-
-          <button
-            class="menu-card"
-            data-module="profile"
-            type="button"
-          >
-
-            <span class="menu-icon">
-              👤
-            </span>
-
-            <span>
-
-              <strong>
-                ข้อมูลของฉัน
-              </strong>
-
-              <small>
-                ดูและแก้ไขข้อมูลส่วนตัว
-              </small>
-
-            </span>
-
+          <button class="menu-card" data-module="profile" type="button">
+            <span class="menu-icon">👤</span>
+            <span><strong>ข้อมูลของฉัน</strong><small>ดูและแก้ไขข้อมูลส่วนตัว</small></span>
           </button>
 
-
-          <button
-            class="menu-card"
-            data-module="announcements"
-            type="button"
-          >
-
-            <span class="menu-icon">
-              📢
-            </span>
-
-            <span>
-
-              <strong>
-                ข่าวสารและประกาศ
-              </strong>
-
-              <small>
-                ติดตามข้อมูลจากคณะทำงาน
-              </small>
-
-            </span>
-
+          <button class="menu-card" data-module="announcements" type="button">
+            <span class="menu-icon">📢</span>
+            <span><strong>ข่าวสารและประกาศ</strong><small>ติดตามข้อมูลจากคณะทำงาน</small></span>
           </button>
 
-
-          <button
-            class="menu-card"
-            data-module="documents"
-            type="button"
-          >
-
-            <span class="menu-icon">
-              📄
-            </span>
-
-            <span>
-
-              <strong>
-                เอกสารหมู่บ้าน
-              </strong>
-
-              <small>
-                เอกสาร Public และ Member
-              </small>
-
-            </span>
-
+          <button class="menu-card" data-module="documents" type="button">
+            <span class="menu-icon">📄</span>
+            <span><strong>เอกสารหมู่บ้าน</strong><small>เอกสาร Public และ Member</small></span>
           </button>
 
-
-          <button
-            class="menu-card"
-            data-module="vote"
-            type="button"
-          >
-
-            <span class="menu-icon">
-              🗳️
-            </span>
-
-            <span>
-
-              <strong>
-                ระบบลงคะแนน
-              </strong>
-
-              <small>
-                ตรวจสิทธิ์และป้องกันลงคะแนนซ้ำ
-              </small>
-
-            </span>
-
+          <button class="menu-card" data-module="vote" type="button">
+            <span class="menu-icon">🗳️</span>
+            <span><strong>ระบบลงคะแนน</strong><small>ตรวจสิทธิ์และป้องกันลงคะแนนซ้ำ</small></span>
           </button>
 
-
-          <button
-            class="menu-card"
-            data-module="survey"
-            type="button"
-          >
-
-            <span class="menu-icon">
-              📋
-            </span>
-
-            <span>
-
-              <strong>
-                แบบสอบถาม
-              </strong>
-
-              <small>
-                ตอบแบบสอบถามตามสิทธิ์สมาชิก
-              </small>
-
-            </span>
-
+          <button class="menu-card" data-module="survey" type="button">
+            <span class="menu-icon">📋</span>
+            <span><strong>แบบสอบถาม</strong><small>ตอบแบบสอบถามตามสิทธิ์สมาชิก</small></span>
           </button>
 
-
-          <button
-            class="menu-card"
-            data-module="maintenance"
-            type="button"
-          >
-
-            <span class="menu-icon">
-              🔧
-            </span>
-
-            <span>
-
-              <strong>
-                แจ้งปัญหา
-              </strong>
-
-              <small>
-                แนบรายละเอียดและรูปภาพ
-              </small>
-
-            </span>
-
+          <button class="menu-card" data-module="maintenance" type="button">
+            <span class="menu-icon">🔧</span>
+            <span><strong>แจ้งปัญหา</strong><small>แนบรายละเอียดและรูปภาพ</small></span>
           </button>
-
         </div>
 
-
-        <section class="content-card">
-
+        <section class="card system-card">
           <div class="section-heading">
-
             <div>
-
-              <p class="eyebrow">
-                LATEST UPDATE
-              </p>
-
-              <h3>
-                สถานะระบบ
-              </h3>
-
+              <p class="eyebrow">LATEST UPDATE</p>
+              <h3>สถานะระบบ</h3>
             </div>
-
           </div>
-
 
           <div class="timeline">
-
-            <div class="timeline-item done">
-
+            <div class="timeline-item">
               <span></span>
-
-              <div>
-
-                <strong>
-                  Cloudflare Pages Frontend
-                </strong>
-
-                <p>
-                  พร้อมใช้งาน
-                </p>
-
-              </div>
-
+              <div><strong>Cloudflare Pages Frontend</strong><p>พร้อมใช้งาน</p></div>
             </div>
-
-
-            <div class="timeline-item done">
-
+            <div class="timeline-item">
               <span></span>
-
-              <div>
-
-                <strong>
-                  LINE Login
-                </strong>
-
-                <p>
-                  เชื่อมต่อเรียบร้อย
-                </p>
-
-              </div>
-
+              <div><strong>LINE Login</strong><p>เชื่อมต่อเรียบร้อย</p></div>
             </div>
-
-
-            <div class="timeline-item done">
-
+            <div class="timeline-item">
               <span></span>
-
-              <div>
-
-                <strong>
-                  Apps Script API
-                </strong>
-
-                <p>
-                  เชื่อมกับฐานข้อมูลสมาชิกแล้ว
-                </p>
-
-              </div>
-
+              <div><strong>Apps Script API</strong><p>เชื่อมกับฐานข้อมูลสมาชิกแล้ว</p></div>
             </div>
-
           </div>
-
         </section>
-
       </section>
-
     </main>
 
-
-    <div
-      id="toast"
-      class="toast"
-      role="status"
-      aria-live="polite"
-    ></div>
-
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <footer>
-
-      <p>
-        Passorn 56 Village Portal · Version 3.1
-      </p>
-
+      <p>Passorn 56 Village Portal · Version 3.2</p>
     </footer>
-
   </div>
-
 
   <script>
     window.APP_CONFIG = {
@@ -753,7 +681,6 @@
     };
   </script>
 
-  <script src="/assets/js/app.js?v=3.1.4"></script>
-
+  <script src="/assets/js/app.js?v=3.2.0"></script>
 </body>
 </html>
