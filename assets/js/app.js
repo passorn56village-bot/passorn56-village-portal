@@ -52,9 +52,7 @@
 
   const state = {
     member: null,
-    houseAvailable: false,
-    liffReady: false,
-    isInLineClient: false
+    houseAvailable: false
   };
 
 
@@ -554,29 +552,7 @@
   }
 
 
-  function isMobileDevice() {
-    return /Android|iPhone|iPad|iPod/i.test(
-      navigator.userAgent
-    );
-  }
-
-
-  function isInsideLineApp() {
-    if (
-      state.liffReady &&
-      window.liff &&
-      typeof liff.isInClient === "function"
-    ) {
-      return liff.isInClient();
-    }
-
-    return /Line\//i.test(
-      navigator.userAgent
-    );
-  }
-
-
-  async function beginLineLogin() {
+  function beginLineLogin() {
 
     const channelId =
       String(
@@ -587,12 +563,6 @@
     const callbackUrl =
       String(
         config?.line?.callbackUrl ||
-        ""
-      ).trim();
-
-    const liffUrl =
-      String(
-        config?.line?.liffUrl ||
         ""
       ).trim();
 
@@ -619,29 +589,6 @@
     }
 
 
-    /*
-     * เมื่อเปิดเว็บจาก Browser บนมือถือ
-     * ให้ส่งเข้า LIFF URL เพื่อเปิดภายในแอป LINE ก่อน
-     */
-    if (
-      isMobileDevice() &&
-      !isInsideLineApp() &&
-      liffUrl
-    ) {
-
-      window.location.href =
-        liffUrl;
-
-      return;
-
-    }
-
-
-    /*
-     * เมื่ออยู่ภายใน LINE/LIFF แล้ว
-     * ใช้ Web OAuth flow เดิม เพื่อให้ Backend เดิมใช้งานต่อได้
-     * โดยไม่ต้องแก้ Apps Script เพิ่ม
-     */
     const stateToken =
       typeof crypto.randomUUID ===
       "function"
@@ -1402,18 +1349,6 @@
 
       }
 
-
-      if (
-        state.liffReady &&
-        window.liff &&
-        typeof liff.isLoggedIn === "function" &&
-        liff.isLoggedIn()
-      ) {
-
-        liff.logout();
-
-      }
-
     } catch (error) {
 
       console.warn(
@@ -1596,72 +1531,9 @@
   }
 
 
-  async function initializeLiff() {
-
-    const liffId =
-      String(
-        config?.line?.liffId ||
-        ""
-      ).trim();
-
-
-    if (
-      !window.liff ||
-      !liffId
-    ) {
-
-      return;
-
-    }
-
-
-    try {
-
-      await liff.init({
-        liffId:
-          liffId,
-
-        withLoginOnExternalBrowser:
-          false
-      });
-
-
-      state.liffReady =
-        true;
-
-      state.isInLineClient =
-        liff.isInClient();
-
-
-      console.log(
-        "LIFF initialized:",
-        {
-          isInClient:
-            state.isInLineClient,
-
-          isLoggedIn:
-            liff.isLoggedIn()
-        }
-      );
-
-
-    } catch (error) {
-
-      console.warn(
-        "LIFF initialization failed:",
-        error
-      );
-
-    }
-
-  }
-
-
   async function initializeApp() {
 
     bindEvents();
-
-    await initializeLiff();
 
 
     const params =
