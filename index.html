@@ -1415,8 +1415,23 @@
   </div>
 
 
-  <script src="/assets/js/config.js?v=3.1.1"></script>
-<script src="/assets/js/app.js?v=3.1.1"></script>
+ <script>
+  window.APP_CONFIG = {
+    appName: "Passorn 56 Village Portal",
+
+    // เรียกผ่าน Cloudflare Pages Function
+    apiBaseUrl: "/api/line-login",
+
+    line: {
+      channelId: "2010691661",
+      callbackUrl: "https://passorn56-village-portal.pages.dev/"
+    },
+
+    demoMode: true
+  };
+</script>
+
+<script src="/assets/js/app.js?v=3.1.3"></script>
 
 </body>
 </html>
